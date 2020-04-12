@@ -7,7 +7,7 @@ const {
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers
+  getRoomUsers,
 } = require("./utils/users");
 
 const app = express();
@@ -20,7 +20,7 @@ const botName = "Chatcord Bot";
 app.use(express.static(path.join(__dirname, "public")));
 
 // Run when client connects
-io.on("connection", socket => {
+io.on("connection", (socket) => {
   socket.on("joinRoom", ({ username, room }) => {
     const user = userJoin(socket.id, username, room);
 
@@ -35,10 +35,16 @@ io.on("connection", socket => {
         "message",
         formatMessage(botName, `${user.username} has joined the chat`)
       );
+
+    // Send users and roon info
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
+    });
   });
 
   // Listen for chatMessage
-  socket.on("chatMessage", msg => {
+  socket.on("chatMessage", (msg) => {
     const user = getCurrentUser(socket.id);
 
     io.to(user.room).emit("message", formatMessage(user.username, msg));
@@ -46,8 +52,7 @@ io.on("connection", socket => {
 
   // Run when client disconnects
   socket.on("disconnect", () => {
-    const user = getCurrentUser(socket.id);
-    userLeave(user.id);
+    const user = userLeave(socket.id);
 
     if (user) {
       // Broadcast to ALL people
@@ -55,6 +60,12 @@ io.on("connection", socket => {
         "message",
         formatMessage(botName, `A ${user.username} has left the chat`)
       );
+
+      // Send users and roon info
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getRoomUsers(user.room),
+      });
     }
   });
 });
