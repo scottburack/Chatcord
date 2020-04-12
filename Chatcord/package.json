@@ -1,0 +1,28 @@
+{
+  "name": "chatcord",
+  "version": "1.0.0",
+  "description": "Realtime chat with rooms",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scottburack/Chatcord.git"
+  },
+  "author": "Scott Burack",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scottburack/Chatcord/issues"
+  },
+  "homepage": "https://github.com/scottburack/Chatcord#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
